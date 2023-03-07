@@ -2,15 +2,25 @@
 __all__ = ['FUNCTION_URL', 'FUNCTION_VIEW']
 
 
-FUNCTION_URL = """from django.conf.urls import url
+FUNCTION_URL = """from django.conf.urls import path
 from rest_framework.urlpatterns import format_suffix_patterns
 from {{ app }} import views
 
+class PkConverter:
+    regex = '([0-9]+|[a-zA-Z0-9_]+)'
+
+    def to_python(self, value):
+        return int(value) if value.isnumeric() else value 
+
+    def to_url(self, value):
+        return f'{value}'
+
+register_converter(converters.PkConverter, 'pk')
 
 urlpatterns = [
 {% for model in models %}
-    url(r'^{{ model|lower }}/(?P<pk>[0-9]+)/$', views.{{ model | lower }}_detail),
-    url(r'^{{ model|lower }}/$', views.{{ model | lower }}_list),
+    path(r'{{ model|lower }}/(?P<pk:pk>/', views.{{ model | lower }}_detail),
+    path(r'{{ model|lower }}/', views.{{ model | lower }}_list),
 {% endfor %}
 ]
 

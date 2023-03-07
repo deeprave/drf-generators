@@ -2,14 +2,24 @@
 __all__ = ['GENERIC_URL', 'GENERIC_VIEW']
 
 
-GENERIC_URL = """from django.conf.urls import include, url
+GENERIC_URL = """from django.conf.urls import include, path
 from {{ app }} import views
 
+class PkConverter:
+    regex = '([0-9]+|[a-zA-Z0-9_]+)'
+
+    def to_python(self, value):
+        return int(value) if value.isnumeric() else value 
+
+    def to_url(self, value):
+        return f'{value}'
+
+register_converter(converters.PkConverter, 'pk')
 
 urlpatterns = [
 {% for model in models %}
-  url(r'^{{ model|lower }}/(?P<pk>[0-9]+)/$', views.{{ model }}Detail.as_view()),
-  url(r'^{{ model|lower }}/$', views.{{ model }}List.as_view()),
+  path(r'{{ model|lower }}/(?P<pk:pk>/', views.{{ model }}Detail.as_view()),
+  path(r'{{ model|lower }}/', views.{{ model }}List.as_view()),
 {% endfor %}
 ]
 """

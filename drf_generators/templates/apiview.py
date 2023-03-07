@@ -2,14 +2,24 @@
 __all__ = ['API_VIEW', 'API_URL']
 
 
-API_URL = """from django.conf.urls import include, url
+API_URL = """from django.conf.urls import include, path
 from {{ app }} import views
 
+class PkConverter:
+    regex = '([0-9]+|[a-zA-Z0-9_]+)'
+
+    def to_python(self, value):
+        return int(value) if value.isnumeric() else value 
+
+    def to_url(self, value):
+        return f'{value}'
+
+register_converter(converters.PkConverter, 'pk')
 
 urlpatterns = [
 {% for model in models %}
-  url(r'^{{ model|lower }}/(?P<id>[0-9]+)/$', views.{{ model }}APIView.as_view()),
-  url(r'^{{ model|lower }}/$', views.{{ model }}APIListView.as_view()),
+  path(r'{{ model|lower }}/(?P<pk:idx>/', views.{{ model }}APIView.as_view()),
+  path(r'{{ model|lower }}/', views.{{ model }}APIListView.as_view()),
 {% endfor %}
 ]
 """
@@ -21,7 +31,6 @@ from rest_framework.views import APIView
 from {{ app }}.serializers import {{ serializers|join:', ' }}
 from {{ app }}.models import {{ models|join:', ' }}
 {% for model in models %}
-
 class {{ model }}APIView(APIView):
 
     def get(self, request, id, format=None):
@@ -67,4 +76,5 @@ class {{ model }}APIListView(APIView):
             serializer.save()
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
+
 {% endfor %}"""
