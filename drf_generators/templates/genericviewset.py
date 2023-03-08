@@ -2,7 +2,7 @@
 __all__ = ['GENERIC_URL', 'GENERIC_VIEW']
 
 
-GENERIC_URL = """from django.urls import path
+GENERIC_URL = """from django.urls import path, register_converter
 from {{ app }} import views
 from {{ app }} import converters
 
