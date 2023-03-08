@@ -17,7 +17,7 @@ urlpatterns = [
 """
 
 
-GENERIC_VIEW = """from rest_framework.permissions import IsAuthenticated
+GENERIC_VIEW = """from rest_framework.permissions import {{ permission }}
 from rest_framework import generics
 
 from {{ app }}.serializers import {{ serializers|join:', ' }}
