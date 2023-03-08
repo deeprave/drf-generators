@@ -8,7 +8,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name='drf-generators',
-    version='0.6.0',
+    version='0.6.1',
 
     description='Generate DRF Serializers, Views, and urls for your API application.',
     long_description=README,

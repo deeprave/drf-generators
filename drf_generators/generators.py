@@ -122,7 +122,7 @@ class FunctionViewGenerator(BaseGenerator):
         super(FunctionViewGenerator, self).__init__(app_config, force)
         self.view_template = Template(FUNCTION_VIEW)
         self.url_template = Template(FUNCTION_URL)
-        self.converter_template = Template(CONVERTERS)
+        self.converters_template = Template(CONVERTERS)
 
 
 class ModelViewSetGenerator(BaseGenerator):
@@ -138,4 +138,4 @@ class GenericViewSetGenerator(BaseGenerator):
         super(GenericViewSetGenerator, self).__init__(app_config, force)
         self.view_template = Template(GENERIC_VIEW)
         self.url_template = Template(GENERIC_URL)
-        self.converter_template = Template(CONVERTERS)
+        self.converters_template = Template(CONVERTERS)
