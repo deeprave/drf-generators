@@ -34,8 +34,8 @@ class BaseGenerator(object):
         else:
             return 'Serializer generation cancelled'
 
-    def generate_views(self):
-        content = self.view_content()
+    def generate_views(self, permission):
+        content = self.view_content(permission)
         filename = 'views.py'
         if self.write_file(content, filename):
             return '  - writing %s' % filename
@@ -62,8 +62,9 @@ class BaseGenerator(object):
                            'depth': depth})
         return self.serializer_template.render(context)
 
-    def view_content(self):
+    def view_content(self, permission):
         context = Context({'app': self.name, 'models': self.models,
+                           'permission': permission,
                            'serializers': self.serializers})
         return self.view_template.render(context)
 

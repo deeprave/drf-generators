@@ -22,6 +22,10 @@ class Command(AppCommand):
         parser.add_argument('--force', dest='force', action='store_true',
                             help='force overwrite files'),
 
+        parser.add_argument('-p', '--permission', dest='permission',
+                            default='IsAuthenticated',
+                            help='drf permission class, default=IsAuthenticated'),
+
         parser.add_argument('--serializers', dest='serializers',
                             action='store_true',
                             help='generate serializers only'),
@@ -49,6 +53,7 @@ class Command(AppCommand):
             serializers = options['serializers']
             views = options['views']
             urls = options['urls']
+            permission = options['permission']
         else:
             raise CommandError('You must be using Django 2.2+')
 
@@ -72,12 +77,12 @@ class Command(AppCommand):
         if serializers:
             result = generator.generate_serializers(depth)
         elif views:
-            result = generator.generate_views()
+            result = generator.generate_views(permission)
         elif urls:
             result = generator.generate_urls()
         else:
             result = generator.generate_serializers(depth) + '\n'
-            result += generator.generate_views() + '\n'
+            result += generator.generate_views(permission) + '\n'
             result += generator.generate_urls()
 
         if options['verbose']:

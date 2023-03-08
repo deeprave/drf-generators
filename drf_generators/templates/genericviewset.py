@@ -30,7 +30,7 @@ class {{ model }}List(generics.ListCreateAPIView):
         queryset = {{ model }}.objects.all()        
         return queryset
 
-    permission_classes = ( IsAuthenticated,)
+    permission_classes = ( {{ permission }},)
     serializer_class = {{ model }}Serializer
 
 class {{ model }}Detail(generics.RetrieveUpdateDestroyAPIView):
@@ -39,6 +39,6 @@ class {{ model }}Detail(generics.RetrieveUpdateDestroyAPIView):
         queryset = {{ model }}.objects.all()        
         return queryset
     serializer_class = {{ model }}Serializer
-    permission_classes = ( IsAuthenticated,)
+    permission_classes = ( {{ permission }},)
 
 {% endfor %}"""
