@@ -2,24 +2,16 @@
 __all__ = ['API_VIEW', 'API_URL']
 
 
-API_URL = """from django.conf.urls import include, path
+API_URL = """from django.urls import path, register_converter
 from {{ app }} import views
-
-class PkConverter:
-    regex = '([0-9]+|[a-zA-Z0-9_]+)'
-
-    def to_python(self, value):
-        return int(value) if value.isnumeric() else value 
-
-    def to_url(self, value):
-        return f'{value}'
+from {{ app }} import converters
 
 register_converter(converters.PkConverter, 'pk')
 
 urlpatterns = [
 {% for model in models %}
-  path(r'{{ model|lower }}/(?P<pk:idx>/', views.{{ model }}APIView.as_view()),
-  path(r'{{ model|lower }}/', views.{{ model }}APIListView.as_view()),
+  path('{{ model|lower }}/<pk:idx>/', views.{{ model }}APIView.as_view()),
+  pathr'{{ model|lower }}/', views.{{ model }}APIListView.as_view()),
 {% endfor %}
 ]
 """

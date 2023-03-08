@@ -8,7 +8,7 @@ from {{ app }} import views
 
 router = SimpleRouter()
 {% for model in models %}
-router.register(r'{{ model | lower }}', views.{{ model }}ViewSet){% endfor %}
+router.register('{{ model | lower }}', views.{{ model }}ViewSet){% endfor %}
 
 urlpatterns = router.urls
 """

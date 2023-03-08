@@ -42,7 +42,7 @@ class Command(AppCommand):
         if sys.version_info[0] != 3 or sys.version_info[1] < 5:
             raise CommandError('Python 3.5 or newer is required')
 
-        if django.VERSION[1] >= 11 or django.VERSION[0] in [2, 3, 4]:
+        if django.VERSION[1] >= 2 or django.VERSION[0] > 2:
             force = options['force']
             fmt = options['format']
             depth = options['depth']
@@ -50,7 +50,9 @@ class Command(AppCommand):
             views = options['views']
             urls = options['urls']
         else:
-            raise CommandError('You must be using Django 1.11, 2.2, 3.x or 4.x')
+            raise CommandError('You must be using Django 2.2+')
+
+        converters = None
 
         if fmt == 'viewset':
             generator = ViewSetGenerator(app_config, force)
@@ -64,7 +66,7 @@ class Command(AppCommand):
             generator = GenericViewSetGenerator(app_config, force)
         else:
             message = '\'%s\' is not a valid format. ' % options['format']
-            message += '(viewset, modelviewset, apiview, function)'
+            message += '(viewset, genericviewset, modelviewset, apiview, function)'
             raise CommandError(message)
 
         if serializers:

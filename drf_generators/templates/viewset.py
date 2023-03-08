@@ -5,10 +5,9 @@ __all__ = ['VIEW_SET_URL', 'VIEW_SET_VIEW']
 VIEW_SET_URL = """from rest_framework.routers import SimpleRouter
 from {{ app }} import views
 
-
 router = SimpleRouter()
 {% for model in models %}
-router.register(r'{{ model | lower }}', views.{{ model }}ViewSet, '{{model}}'){% endfor %}
+router.register('{{ model | lower }}', views.{{ model }}ViewSet, '{{model}}'){% endfor %}
 
 urlpatterns = router.urls
 """

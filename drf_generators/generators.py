@@ -7,6 +7,7 @@ from drf_generators.templates.viewset import VIEW_SET_URL, VIEW_SET_VIEW
 from drf_generators.templates.function import FUNCTION_URL, FUNCTION_VIEW
 from drf_generators.templates.modelviewset import MODEL_URL, MODEL_VIEW
 from drf_generators.templates.genericviewset import GENERIC_URL, GENERIC_VIEW
+from drf_generators.templates.converters import CONVERTERS
 
 
 __all__ = ['BaseGenerator', 'APIViewGenerator', 'ViewSetGenerator',
@@ -23,6 +24,7 @@ class BaseGenerator(object):
         self.serializer_template = Template(SERIALIZER)
         self.models = self.get_model_names()
         self.serializers = self.get_serializer_names()
+        self.converters = self.get_converters()
 
     def generate_serializers(self, depth):
         content = self.serializer_content(depth)
@@ -43,10 +45,17 @@ class BaseGenerator(object):
     def generate_urls(self):
         content = self.url_content()
         filename = 'urls.py'
+        if not self.write_file(content, filename):
+            return 'Urls generation cancelled'
+        result = '  - writing %s' % filename + '\n'
+
+        content = self.converter_content()
+        filename = 'converters.py'
         if self.write_file(content, filename):
-            return '  - writing %s' % filename
+            result += '  - writing %s' % filename
         else:
-            return 'Url generation cancelled'
+            result += 'Converter generation cancelled'
+        return result
 
     def serializer_content(self, depth):
         context = Context({'app': self.name, 'models': self.models,
@@ -62,11 +71,18 @@ class BaseGenerator(object):
         context = Context({'app': self.name, 'models': self.models})
         return self.url_template.render(context)
 
+    def converter_content(self):
+        context = Context({'app': self.name, 'models': self.models})
+        return self.converters_template.render(context)
+
     def get_model_names(self):
         return [m.__name__ for m in self.app_config.get_models()]
 
     def get_serializer_names(self):
         return [m + 'Serializer' for m in self.models]
+
+    def get_converters(self):
+        return []
 
     def write_file(self, content, filename):
         name = os.path.join(os.path.dirname(self.app.__file__), filename)
@@ -88,6 +104,7 @@ class APIViewGenerator(BaseGenerator):
         super(APIViewGenerator, self).__init__(app_config, force)
         self.view_template = Template(API_VIEW)
         self.url_template = Template(API_URL)
+        self.converter_template = Template(CONVERTERS)
 
 
 class ViewSetGenerator(BaseGenerator):
@@ -104,6 +121,7 @@ class FunctionViewGenerator(BaseGenerator):
         super(FunctionViewGenerator, self).__init__(app_config, force)
         self.view_template = Template(FUNCTION_VIEW)
         self.url_template = Template(FUNCTION_URL)
+        self.converter_template = Template(CONVERTERS)
 
 
 class ModelViewSetGenerator(BaseGenerator):
@@ -119,3 +137,4 @@ class GenericViewSetGenerator(BaseGenerator):
         super(GenericViewSetGenerator, self).__init__(app_config, force)
         self.view_template = Template(GENERIC_VIEW)
         self.url_template = Template(GENERIC_URL)
+        self.converter_template = Template(CONVERTERS)
